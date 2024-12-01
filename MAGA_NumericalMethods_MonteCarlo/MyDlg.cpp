@@ -11,7 +11,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
+#define REDRAW WM_USER + 1
 
 // Диалоговое окно CAboutDlg используется для описания сведений о приложении
 
@@ -62,6 +62,7 @@ void MyDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_XOY, XOY);
 	DDX_Control(pDX, IDC_XOZ, XOZ);
 	DDX_Control(pDX, IDC_YOZ, YOZ);
+	DDX_Control(pDX, IDC_PROGRESS1, Progress);
 }
 
 BEGIN_MESSAGE_MAP(MyDlg, CDialogEx)
@@ -70,6 +71,9 @@ BEGIN_MESSAGE_MAP(MyDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_PARAMS, &MyDlg::OnBnClickedButtonParams)
 	ON_BN_CLICKED(IDOK, &MyDlg::OnBnClickedOk)
+	ON_WM_TIMER()
+	ON_MESSAGE(REDRAW, &MyDlg::OnRedraw)
+	ON_BN_CLICKED(IDC_BUTTON1, &MyDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -112,6 +116,8 @@ BOOL MyDlg::OnInitDialog()
 	XOZ.SetPadding(10, 5, 10, 10);
 	XOY.SetPadding(10, 5, 10, 10);
 	YOZ.SetPadding(10, 5, 10, 10);
+
+	Progress.SetRange(0, 100);
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
 }
 
@@ -175,6 +181,7 @@ void MyDlg::OnBnClickedButtonParams()
 	model.SetX(pdlg.x);
 	model.SetEsm(pdlg.Esm);
 	model.SetT(pdlg.T);
+	model.SetStepLimit(pdlg.StepLimit);
 }
 
 
@@ -182,9 +189,44 @@ void MyDlg::OnBnClickedOk()
 {
 	// TODO: добавьте свой код обработчика уведомлений
 	if (!init)OnBnClickedButtonParams();
+	Progress.SetPos(0);
+	model.Stop();
 	model.main();
 
+	timerid = SetTimer(123, 20, NULL);
+
+	thread thr([&]() {
+		model.Wait(); 
+		KillTimer(timerid); 
+		PostMessageW(REDRAW);
+		});
+	thr.detach();
+}
+
+
+void MyDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
+	//XOY.SetData(model.GetXOY());
+	//XOZ.SetData(model.GetXOZ());
+	//YOZ.SetData(model.GetYOZ());
+	Progress.SetPos(float(model.GetStepCounter()) / float(pdlg.StepLimit) * 100.);
+	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+afx_msg LRESULT MyDlg::OnRedraw(WPARAM wParam, LPARAM lParam)
+{
 	XOY.SetData(model.GetXOY());
 	XOZ.SetData(model.GetXOZ());
 	YOZ.SetData(model.GetYOZ());
+	Progress.SetPos(float(model.GetStepCounter()) / float(pdlg.StepLimit) * 100.);
+	return 0;
+}
+
+
+void MyDlg::OnBnClickedButton1()
+{
+	// TODO: добавьте свой код обработчика уведомлений
+
 }

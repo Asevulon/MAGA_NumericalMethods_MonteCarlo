@@ -15,8 +15,9 @@ ParamDlg::ParamDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_PARAM_DIALOG, pParent)
 	, N(10)
 	, x(0.5)
-	, Esm(0)
-	, T(0)
+	, Esm(1)
+	, T(0.75)
+	, StepLimit(1000)
 {
 
 }
@@ -32,6 +33,7 @@ void ParamDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT2, x);
 	DDX_Text(pDX, IDC_EDIT3, Esm);
 	DDX_Text(pDX, IDC_EDIT4, T);
+	DDX_Text(pDX, IDC_EDIT5, StepLimit);
 }
 
 

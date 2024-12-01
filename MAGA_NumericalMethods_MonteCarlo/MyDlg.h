@@ -41,4 +41,11 @@ public:
 	ModelDrawer YOZ;
 	afx_msg void OnBnClickedOk();
 	Model model;
+	UINT_PTR timerid;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	CProgressCtrl Progress;
+protected:
+	afx_msg LRESULT OnRedraw(WPARAM wParam, LPARAM lParam);
+public:
+	afx_msg void OnBnClickedButton1();
 };

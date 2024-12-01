@@ -1,5 +1,7 @@
 #pragma once
 #include<vector>
+#include<thread>
+#include<mutex>
 using namespace std;
 
 class Model
@@ -10,10 +12,17 @@ private:
 	double Esm = 0;
 	double T = 0;
 	double E = 0;
+	int StepLimit = 0;
 	vector<vector<vector<int>>>data;
 
 	int StepCounter = 0;
 	const double kb = 1.380649e-23;
+
+	bool Continue = false;
+
+	mutex smutex;
+	mutex dmutex;
+	mutex wmutex;
 protected:
 	void GenerateStartDistribution();
 	inline double rand(double left, double right);
@@ -28,14 +37,21 @@ protected:
 	inline double CalcLocalEnergy(int& i, int& j, int& k);
 	inline double CalcDE(int& i, int& j, int& k, int& in, int& jn, int& kn);
 	inline void Swap(int& i, int& j, int& k, int& in, int& jn, int& kn);
+	void MonteCarlo();
 public:
 	void SetN(int val);
 	void SetX(double val);
 	void SetEsm(double val);
 	void SetT(double val);
+	void SetStepLimit(int val);
 	vector<vector<int>>GetXOY();
 	vector<vector<int>>GetXOZ();
 	vector<vector<int>>GetYOZ();
 	void main();
+	void Stop();
+	bool InProc();
+	void Wait();
+	int GetStepCounter();
+	double GetEsr();
 };
 

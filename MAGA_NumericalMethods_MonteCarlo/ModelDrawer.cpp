@@ -81,49 +81,7 @@ void ModelDrawer::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	FontFamily FF(L"Arial");
 	Gdiplus::Font font(&FF, 12, FontStyle::FontStyleRegular, UnitPixel);
 	SolidBrush brush(Color::Black);
-	for (int i = 0; i < GridLinesAmount; i++)
-	{
-		PointF p1, p2;
-		p1.X = left;
-		p1.Y = top - i * steplenY;
-
-		p2.X = right;
-		p2.Y = top - i * steplenY;
-
-		matr.TransformPoints(&p1);
-		matr.TransformPoints(&p2);
-
-		gr.DrawLine(&BackGroundPen, p1, p2);
-
-
-		p1.X = right - i * steplenX;
-		p1.Y = top;
-
-		p2.X = right - i * steplenX;
-		p2.Y = bot;
-
-		matr.TransformPoints(&p1);
-		matr.TransformPoints(&p2);
-
-		gr.DrawLine(&BackGroundPen, p1, p2);
-
-
-		CString str;
-		str.Format(L"%.f", (top - i * steplenY) * MarksScaler);
-
-		PointF strPoint;
-		strPoint.X = left - actWidth / 100 - CalcStringLen(lpDrawItemStruct->hDC, str) / xScale;
-		strPoint.Y = top - i * steplenY -6 / yScale;
-		matr.TransformPoints(&strPoint);
-		gr.DrawString(str, str.GetLength() + 1, &font, strPoint, &brush);
-
-		str.Format(L"%.f", (right - i * steplenX) * MarksScaler);
-
-		strPoint.X = right - i * steplenX - CalcStringLen(lpDrawItemStruct->hDC, str) / xScale / 2.;
-		strPoint.Y = bot + 6 / yScale;
-		matr.TransformPoints(&strPoint);
-		gr.DrawString(str, str.GetLength() + 1, &font, strPoint, &brush);
-	}
+	
 
 	Pen pen(Color::Black, 1.1F);
 	PointF p1(left, top), p2(left, bot);
@@ -148,15 +106,6 @@ void ModelDrawer::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	}
 
 
-	p1.X = left;
-	p1.Y = top;
-	matr.TransformPoints(&p1);
-	p2.X = right;
-	p2.Y = bot;
-	matr.TransformPoints(&p2);
-	RectF clip(p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y);
-	gr.SetClip(clip);
-
 	SolidBrush DataBrushA(Color(200, 100, 0));
 	SolidBrush DataBrushB(Color(0, 100, 200));
 	Brush* currentbrush = nullptr;
@@ -164,24 +113,20 @@ void ModelDrawer::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	double theight = 0;
 	double xlen = right - left;
 	double ylen = top - bot;
-	bool drawcopy = false;
 	for (int i = 0; i < data.size(); i++)
 	{
 		for(int j = 0; j < data.size(); j++)
 		{
 			p1 = PointF(i, j);
-			p2 = p1;
-			p1 = p1 - radius;
-			p2 = p2 + radius;
+			p2 = PointF(i + 1, j + 1);
 			matr.TransformPoints(&p1);
 			matr.TransformPoints(&p2);
 			twidth = p2.X - p1.X;
-			theight = p2.Y - p1.Y;
+			theight = p1.Y - p2.Y;
 			currentbrush = (data[i][j] == 1) ? &DataBrushA : &DataBrushB;
-			gr.FillEllipse(currentbrush, p1.X, p1.Y, twidth, theight);
+			gr.FillRectangle(currentbrush, p1.X, p2.Y, twidth, theight);
 		}
 	}
-	gr.ResetClip();
 
 	ToWindow.DrawImage(&bmp, 0, 0);
 }
@@ -189,7 +134,7 @@ void ModelDrawer::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 void ModelDrawer::SetData(vector<vector<int>>& source)
 {
 	data = source;
-	SetRange(PointF(-1, -1), PointF(data.size(), data.size()));
+	SetRange(PointF(0, 0), PointF(data.size() , data.size()));
 	SetGridLinesAmount(data.size() + 2);
 	Invalidate();
 }

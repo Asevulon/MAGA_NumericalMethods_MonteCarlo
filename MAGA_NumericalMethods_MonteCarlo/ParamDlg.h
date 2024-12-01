@@ -26,4 +26,5 @@ public:
 	double x;
 	double Esm;
 	double T;
+	int StepLimit;
 };

@@ -3,6 +3,7 @@
 
 void Model::GenerateStartDistribution()
 {
+	unique_lock<mutex>lk(dmutex);
 	srand(time(NULL));
 	
 	int target = (x < 0.5) ? -1 : 1;
@@ -71,6 +72,7 @@ void Model::GenerateBorders()
 
 void Model::CalcStartEnergy()
 {
+	unique_lock<mutex>lk(dmutex);
 	int n = N - 1;
 	E = 0;
 	for (int i = 1; i < n; i++)
@@ -95,6 +97,7 @@ void Model::CalcStartEnergy()
 
 void Model::MonteCarloStep()
 {
+	unique_lock<mutex>lk(dmutex);
 	StepCounter++;
 
 	int i = RandId();
@@ -102,7 +105,11 @@ void Model::MonteCarloStep()
 	int k = RandId();
 
 	vector<vector<int>> neighbours = GetNeighbours(i, j, k);
-	if (neighbours.empty())return;
+	if (neighbours.empty())
+	{
+		StepCounter--;
+		return;
+	}
 
 	int id = rand(0, neighbours.size() - 1e-10);
 	
@@ -182,6 +189,8 @@ vector<vector<int>> Model::GetNeighbours(int i, int j, int k)
 		ids[2] = k - 1;
 		res.push_back(ids);
 	}
+
+	return res;
 }
 
 inline void Model::AvoidBorder(int& i, int& j, int& k)
@@ -226,7 +235,7 @@ inline double Model::CalcLocalEnergy(int& i, int& j, int& k)
 
 inline double Model::CalcDE(int& i, int& j, int& k, int& in, int& jn, int& kn)
 {
-	int res = 0;
+	double res = 0;
 
 	int n[7] = { data[i][j][k],data[i + 1][j][k],data[i - 1][j][k],data[i][j + 1][k],data[i][j - 1][k],data[i][j][k + 1],data[i][j][k - 1] };
 	int nn[7] = { data[in][jn][kn],data[in + 1][jn][kn],data[in - 1][jn][kn],data[in][jn + 1][kn],data[in][jn - 1][kn],data[in][jn][kn + 1],data[in][jn][kn - 1] };
@@ -290,6 +299,18 @@ inline void Model::Swap(int& i, int& j, int& k, int& in, int& jn, int& kn)
 	if (kn == N - 2)data[in][jn][1] = data[in][jn][kn];
 }
 
+void Model::MonteCarlo()
+{
+	unique_lock<mutex>lk(smutex);
+	unique_lock<mutex>lk1(wmutex);
+
+	while ((StepCounter < StepLimit) && Continue)
+	{
+		MonteCarloStep();
+	}
+	Continue = false;
+}
+
 void Model::SetN(int val)
 {
 	N = val + 2;
@@ -308,13 +329,21 @@ void Model::SetEsm(double val)
 
 void Model::SetT(double val)
 {
-	T = val;
+	T = val * Esm / 2. / kb;
+}
+
+void Model::SetStepLimit(int val)
+{
+	StepLimit = val;
 }
 
 vector<vector<int>> Model::GetXOY()
 {
 	vector<vector<int>>res(N,vector<int>(N,1));
 	int id = N / 2;
+
+	unique_lock<mutex>lk(dmutex);
+
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++)
@@ -329,6 +358,7 @@ vector<vector<int>> Model::GetXOZ()
 {
 	vector<vector<int>>res(N, vector<int>(N, 1));
 	int id = N / 2;
+	unique_lock<mutex>lk(dmutex);
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++)
@@ -343,6 +373,7 @@ vector<vector<int>> Model::GetYOZ()
 {
 	vector<vector<int>>res(N, vector<int>(N, 1));
 	int id = N / 2;
+	unique_lock<mutex>lk(dmutex);
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++)
@@ -358,4 +389,35 @@ void Model::main()
 	GenerateStartDistribution();
 	CalcStartEnergy();
 	StepCounter = 0;
+	Continue = true;
+
+	thread thr([&]() {MonteCarlo(); });
+	thr.detach();
+}
+
+void Model::Stop()
+{
+	Continue = false;
+	unique_lock<mutex>lk(smutex);
+}
+
+bool Model::InProc()
+{
+	return Continue;
+}
+
+void Model::Wait()
+{
+	if (!Continue)return;
+	unique_lock<mutex>lk(wmutex);
+}
+
+int Model::GetStepCounter()
+{
+	return StepCounter;
+}
+
+double Model::GetEsr()
+{
+	return E / (N - 2) / (N - 2) / (N - 2);
 }
