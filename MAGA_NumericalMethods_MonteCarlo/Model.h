@@ -39,6 +39,8 @@ protected:
 	inline void Swap(int& i, int& j, int& k, int& in, int& jn, int& kn);
 	void MonteCarlo();
 public:
+	Model();
+	Model(const Model& r);
 	void SetN(int val);
 	void SetX(double val);
 	void SetEsm(double val);
@@ -53,5 +55,6 @@ public:
 	void Wait();
 	int GetStepCounter();
 	double GetEsr();
+	double GetT();
 };
 

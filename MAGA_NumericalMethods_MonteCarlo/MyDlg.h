@@ -6,6 +6,7 @@
 #include"ParamDlg.h"
 #include"ModelDrawer.h"
 #include"Model.h"
+#include"EsrDlg.h"
 // Диалоговое окно MyDlg
 class MyDlg : public CDialogEx
 {

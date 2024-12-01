@@ -183,10 +183,13 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Drawer.h" />
+    <ClInclude Include="EsrDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MAGA_NumericalMethods_MonteCarlo.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelDrawer.h" />
+    <ClInclude Include="MultiExp.h" />
     <ClInclude Include="MyDlg.h" />
     <ClInclude Include="ParamDlg.h" />
     <ClInclude Include="pch.h" />
@@ -194,9 +197,12 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Drawer.cpp" />
+    <ClCompile Include="EsrDlg.cpp" />
     <ClCompile Include="MAGA_NumericalMethods_MonteCarlo.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelDrawer.cpp" />
+    <ClCompile Include="MultiExp.cpp" />
     <ClCompile Include="MyDlg.cpp" />
     <ClCompile Include="ParamDlg.cpp" />
     <ClCompile Include="pch.cpp">

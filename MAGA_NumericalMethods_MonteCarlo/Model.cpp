@@ -4,7 +4,7 @@
 void Model::GenerateStartDistribution()
 {
 	unique_lock<mutex>lk(dmutex);
-	srand(time(NULL));
+	srand(time(NULL) & GetCurrentThreadId());
 	
 	int target = (x < 0.5) ? -1 : 1;
 
@@ -304,11 +304,26 @@ void Model::MonteCarlo()
 	unique_lock<mutex>lk(smutex);
 	unique_lock<mutex>lk1(wmutex);
 
+	GenerateStartDistribution();
+	CalcStartEnergy();
+	StepCounter = 0;
+	Continue = true;
+
 	while ((StepCounter < StepLimit) && Continue)
 	{
 		MonteCarloStep();
 	}
+	CalcStartEnergy();
 	Continue = false;
+}
+
+Model::Model()
+{
+}
+
+Model::Model(const Model& r)
+{
+
 }
 
 void Model::SetN(int val)
@@ -386,10 +401,7 @@ vector<vector<int>> Model::GetYOZ()
 
 void Model::main()
 {
-	GenerateStartDistribution();
-	CalcStartEnergy();
-	StepCounter = 0;
-	Continue = true;
+	
 
 	thread thr([&]() {MonteCarlo(); });
 	thr.detach();
@@ -420,4 +432,9 @@ int Model::GetStepCounter()
 double Model::GetEsr()
 {
 	return E / (N - 2) / (N - 2) / (N - 2);
+}
+
+double Model::GetT()
+{
+	return T;
 }

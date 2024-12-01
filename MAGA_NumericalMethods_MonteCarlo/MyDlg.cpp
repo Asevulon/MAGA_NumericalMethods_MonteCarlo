@@ -228,5 +228,6 @@ afx_msg LRESULT MyDlg::OnRedraw(WPARAM wParam, LPARAM lParam)
 void MyDlg::OnBnClickedButton1()
 {
 	// TODO: добавьте свой код обработчика уведомлений
-
+	EsrDlg dlg;
+	dlg.DoModal();
 }
