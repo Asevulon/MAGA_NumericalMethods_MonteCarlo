@@ -173,6 +173,8 @@ void MyDlg::OnBnClickedButtonParams()
 	init = true;
 	model.SetN(pdlg.N);
 	model.SetX(pdlg.x);
+	model.SetEsm(pdlg.Esm);
+	model.SetT(pdlg.T);
 }
 
 

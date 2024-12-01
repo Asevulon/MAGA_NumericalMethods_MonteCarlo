@@ -24,4 +24,6 @@ protected:
 public:
 	int N;
 	double x;
+	double Esm;
+	double T;
 };

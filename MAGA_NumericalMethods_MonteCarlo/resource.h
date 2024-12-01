@@ -13,8 +13,9 @@
 #define IDC_EDIT2                       1002
 #define IDC_XOY                         1002
 #define IDC_XOZ                         1003
-#define IDC_XOY3                        1004
+#define IDC_EDIT3                       1003
 #define IDC_YOZ                         1004
+#define IDC_EDIT4                       1004
 
 // Next default values for new objects
 // 
