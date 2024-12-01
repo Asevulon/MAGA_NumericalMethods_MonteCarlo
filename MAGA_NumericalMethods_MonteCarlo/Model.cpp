@@ -4,7 +4,7 @@
 void Model::GenerateStartDistribution()
 {
 	unique_lock<mutex>lk(dmutex);
-	srand(time(NULL) & GetCurrentThreadId());
+	srand(time(NULL) ^ GetCurrentThreadId());
 	
 	int target = (x < 0.5) ? -1 : 1;
 
@@ -305,7 +305,7 @@ void Model::MonteCarlo()
 	unique_lock<mutex>lk1(wmutex);
 
 	GenerateStartDistribution();
-	CalcStartEnergy();
+	//CalcStartEnergy();
 	StepCounter = 0;
 	Continue = true;
 
