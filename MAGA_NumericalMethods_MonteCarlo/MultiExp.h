@@ -12,8 +12,14 @@ private:
 	double Esm = 0;
 	int StepLimit = 0;
 	vector<Model>models;
-protected:
 
+	bool reinterpolate = true;
+	vector<double> EsrInterpolated;
+	vector<double> TInterpolated;
+	vector<double> EsrDerivative;
+	int InterpolateN = 0;
+protected:
+	void Interpolate();
 public:
 	void SetN(int val);
 	void SetX(double val);
@@ -22,12 +28,16 @@ public:
 	void SetTmin(double val);
 	void SetTmax(double val);
 	void SetNStep(int val);
-
+	void SetInetrpolateN(int val);
+	
 	void main();
 	void Wait();
 	double GetProgress();
 	vector<double>GetEsr();
+	vector<double>GetEsrInterpolated();
 	vector<double>GetT();
+	vector<double>GetTInterpolated();
+	vector<double>GetEsrDerivative();
 	void Stop();
 };
 

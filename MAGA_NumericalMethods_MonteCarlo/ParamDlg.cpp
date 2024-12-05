@@ -17,7 +17,7 @@ ParamDlg::ParamDlg(CWnd* pParent /*=nullptr*/)
 	, x(0.5)
 	, Esm(1)
 	, T(0.75)
-	, StepLimit(10000)
+	, StepLimit(1000000)
 {
 
 }

@@ -15,7 +15,8 @@ EsrDlg::EsrDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ESR_DIALOG, pParent)
 	, Tmin(0.6)
 	, Tmax(3.5)
-	, N(20)
+	, N(100)
+	, NInterpolate(2000)
 {
 
 }
@@ -33,6 +34,8 @@ void EsrDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT3, N);
 	DDX_Control(pDX, IDC_Esr, EsrDrw);
 	DDX_Control(pDX, IDOK, OkButton);
+	DDX_Text(pDX, IDC_EDIT4, NInterpolate);
+	DDX_Control(pDX, IDC_Esr2, DerDrw);
 }
 
 
@@ -60,7 +63,7 @@ void EsrDlg::OnBnClickedOk()
 	me.SetNStep(N);
 	me.SetTmin(Tmin);
 	me.SetTmax(Tmax);
-
+	me.SetInetrpolateN(NInterpolate);
 	prog.SetPos(0);
 
 	me.main();
@@ -85,6 +88,9 @@ BOOL EsrDlg::OnInitDialog()
 
 	EsrDrw.SetPadding(22, 5, 10, 10);
 	EsrDrw.SetTitle(L"<E>");
+
+	DerDrw.SetPadding(22, 5, 10, 10);
+	DerDrw.SetTitle(L"Производная <E>");
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// Исключение: страница свойств OCX должна возвращать значение FALSE
 }
@@ -92,10 +98,14 @@ BOOL EsrDlg::OnInitDialog()
 
 afx_msg LRESULT EsrDlg::OnModelsDone(WPARAM wParam, LPARAM lParam)
 {
-	MessageBoxW(L"Моделирование завершено");
-	EsrDrw.SetData(me.GetEsr());
-	EsrDrw.SetKeys(me.GetT());
+	EsrDrw.SetData(me.GetEsrInterpolated());
+	EsrDrw.SetKeys(me.GetTInterpolated());
 	EsrDrw.Invalidate();
+	DerDrw.SetData(me.GetEsrDerivative());
+	DerDrw.SetKeys(me.GetTInterpolated());
+	DerDrw.Invalidate();
+	prog.SetPos(me.GetProgress());
+	MessageBoxW(L"Моделирование завершено");
 	return 0;
 }
 

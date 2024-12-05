@@ -92,7 +92,7 @@ void Model::CalcStartEnergy()
 			}
 		}
 	}
-	E *= Esm;
+	E *= -Esm;
 }
 
 void Model::MonteCarloStep()
@@ -129,7 +129,8 @@ void Model::MonteCarloStep()
 	}
 
 	double R = rand(0, 1);
-	if (R < exp(-DE / kb / T))
+	double cap = exp(DE / kb / T);
+	if (R < cap)
 	{
 		Swap(i, j, k, in, jn, kn);
 		E += DE;
@@ -229,7 +230,7 @@ inline double Model::CalcLocalEnergy(int& i, int& j, int& k)
 	res += data[i][j][k] * data[i][j][k - 1];
 	res += data[i][j][k] * data[i][j][k + 1];
 
-	res *= Esm;
+	res *= -Esm;
 	return res;
 }
 

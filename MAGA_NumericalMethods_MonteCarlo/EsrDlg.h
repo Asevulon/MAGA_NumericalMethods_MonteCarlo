@@ -38,4 +38,6 @@ public:
 	MultiExp me;
 	Drawer EsrDrw;
 	CButton OkButton;
+	int NInterpolate;
+	Drawer DerDrw;
 };
