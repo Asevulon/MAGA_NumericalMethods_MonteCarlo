@@ -193,7 +193,7 @@ void MyDlg::OnBnClickedOk()
 	model.Stop();
 	//model.Animated();
 	model.main();
-	timerid = SetTimer(123, 20, NULL);
+	timerid = SetTimer(123, 500, NULL);
 
 	thread thr([&]() {
 		model.Wait(); 

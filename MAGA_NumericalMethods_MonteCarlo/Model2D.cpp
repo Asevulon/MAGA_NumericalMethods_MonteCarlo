@@ -67,7 +67,6 @@ void Model2D::CalcStartEnergy()
 
 				E += data[i][j] * data[i][j - 1];
 				E += data[i][j] * data[i][j + 1];
-
 		}
 	}
 	E *= -Esm;
@@ -80,11 +79,13 @@ void Model2D::MonteCarloStep()
 	if (StepCounter == NMKSH)
 	{
 		StepCounter = 0;
+		MKSHDone = true;
 		MKSH++;
 	}
+
 	int i = RandId();
 	int j = RandId();
-
+	
 	vector<vector<int>> neighbours = GetNeighbours(i, j);
 	if (neighbours.empty())
 	{
@@ -179,8 +180,8 @@ inline double Model2D::CalcDE(int& i, int& j, int& in, int& jn)
 {
 	double res = 0;
 
-	int n[5] = { data[i][j],data[i + 1][j],data[i - 1][j],data[i][j + 1],data[i][j - 1] };
-	int nn[5] = { data[in][jn],data[in + 1][jn],data[in - 1][jn],data[in][jn + 1],data[in][jn - 1] };
+	vector<int> n = { data[i][j],data[i + 1][j],data[i - 1][j],data[i][j + 1],data[i][j - 1] };
+	vector<int> nn = { data[in][jn],data[in + 1][jn],data[in - 1][jn],data[in][jn + 1],data[in][jn - 1] };
 
 	res -= n[0] * n[1];
 	res -= n[0] * n[2];
@@ -192,8 +193,10 @@ inline double Model2D::CalcDE(int& i, int& j, int& in, int& jn)
 	res -= nn[0] * nn[3];
 	res -= nn[0] * nn[4];
 
-	n[0] = -n[0];
-	nn[0] = -nn[0];
+	Swap(i, j, in, jn);
+
+	n = [&]() {vector<int> temp = { data[i][j], data[i + 1][j], data[i - 1][j], data[i][j + 1], data[i][j - 1] }; return temp; }();
+	nn = [&]() {vector<int> temp = { data[in][jn],data[in + 1][jn],data[in - 1][jn],data[in][jn + 1],data[in][jn - 1] }; return temp; }();
 
 	res += n[0] * n[1];
 	res += n[0] * n[2];
@@ -206,6 +209,9 @@ inline double Model2D::CalcDE(int& i, int& j, int& in, int& jn)
 	res += nn[0] * nn[4];
 
 	res *= -Esm;
+
+	Swap(i, j, in, jn);
+
 	return res;
 }
 
@@ -215,16 +221,16 @@ inline void Model2D::Swap(int& i, int& j, int& in, int& jn)
 	data[in][jn] = -data[in][jn];
 
 	if (i == 1)data[N - 1][j] = data[i][j];
-	if (i == N - 2)data[1][j] = data[i][j];
+	if (i == N - 2)data[0][j] = data[i][j];
 
 	if (j == 1)data[i][N - 1] = data[i][j];
-	if (j == N - 2)data[i][1] = data[i][j];
+	if (j == N - 2)data[i][0] = data[i][j];
 
 	if (in == 1)data[N - 1][jn] = data[in][jn];
-	if (in == N - 2)data[1][jn] = data[in][jn];
+	if (in == N - 2)data[0][jn] = data[in][jn];
 
 	if (jn == 1)data[in][N - 1] = data[in][jn];
-	if (jn == N - 2)data[in][1] = data[in][jn];
+	if (jn == N - 2)data[in][0] = data[in][jn];
 }
 
 void Model2D::MonteCarlo()
@@ -263,6 +269,11 @@ void Model2D::MonteCarloAnimated()
 	{
 		MonteCarloStep();
 		WaitAnimation();
+		/*if (MKSHDone)
+		{
+			WaitAnimation();
+			MKSHDone = false;
+		}*/
 	}
 	CalcStartEnergy();
 	Continue = false;
@@ -272,6 +283,39 @@ void Model2D::WaitAnimation()
 {
 	unique_lock<mutex>lk(amutex);
 	acv.wait(lk);
+}
+
+void Model2D::Test()
+{
+	double res = 0;
+
+	int n[5] = { 1,1,1,1,-1 };
+	int nn[5] = { -1,-1,-1,-1,1};
+
+	res -= n[0] * n[1];
+	res -= n[0] * n[2];
+	res -= n[0] * n[3];
+	res -= n[0] * n[4];
+
+	res -= nn[0] * nn[1];
+	res -= nn[0] * nn[2];
+	res -= nn[0] * nn[3];
+	res -= nn[0] * nn[4];
+
+	n[0] = -n[0];
+	nn[0] = -nn[0];
+
+	res += n[0] * n[1];
+	res += n[0] * n[2];
+	res += n[0] * n[3];
+	res += n[0] * n[4];
+
+	res += nn[0] * nn[1];
+	res += nn[0] * nn[2];
+	res += nn[0] * nn[3];
+	res += nn[0] * nn[4];
+
+	res *= -Esm;
 }
 
 Model2D::Model2D()
@@ -301,7 +345,7 @@ void Model2D::SetEsm(double val)
 
 void Model2D::SetT(double val)
 {
-	T = val * Esm / 2. / kb;
+	T = val * fabs(Esm) / 2. / kb;
 }
 
 void Model2D::SetStepLimit(int val)
@@ -317,6 +361,7 @@ vector<vector<int>> Model2D::GetData()
 
 void Model2D::main()
 {
+	Test();
 	thread thr([&]() {MonteCarlo(); });
 	thr.detach();
 }

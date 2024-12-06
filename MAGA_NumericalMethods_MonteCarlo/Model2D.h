@@ -27,6 +27,7 @@ private:
 	mutex wmutex;
 	mutex amutex;
 	condition_variable acv;
+	bool MKSHDone = false;
 protected:
 	void GenerateStartDistribution();
 	inline double rand(double left, double right);
@@ -43,6 +44,7 @@ protected:
 	void MonteCarlo();
 	void MonteCarloAnimated();
 	void WaitAnimation();
+	void Test();
 public:
 	Model2D();
 	Model2D(const Model2D& r);
