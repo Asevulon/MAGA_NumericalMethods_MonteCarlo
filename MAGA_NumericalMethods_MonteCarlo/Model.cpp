@@ -286,22 +286,22 @@ inline void Model::Swap(int& i, int& j, int& k, int& in, int& jn, int& kn)
 	data[in][jn][kn] = -data[in][jn][kn];
 
 	if (i == 1)data[N - 1][j][k] = data[i][j][k];
-	if (i == N - 2)data[1][j][k] = data[i][j][k];
+	if (i == N - 2)data[0][j][k] = data[i][j][k];
 
 	if (j == 1)data[i][N - 1][k] = data[i][j][k];
-	if (j == N - 2)data[i][1][k] = data[i][j][k];
+	if (j == N - 2)data[i][0][k] = data[i][j][k];
 
 	if (k == 1)data[i][j][N - 1] = data[i][j][k];
-	if (k == N - 2)data[i][j][1] = data[i][j][k];
+	if (k == N - 2)data[i][j][0] = data[i][j][k];
 
 	if (in == 1)data[N - 1][jn][kn] = data[in][jn][kn];
-	if (in == N - 2)data[1][jn][kn] = data[in][jn][kn];
+	if (in == N - 2)data[0][jn][kn] = data[in][jn][kn];
 
 	if (jn == 1)data[in][N - 1][kn] = data[in][jn][kn];
-	if (jn == N - 2)data[in][1][kn] = data[in][jn][kn];
+	if (jn == N - 2)data[in][0][kn] = data[in][jn][kn];
 
 	if (kn == 1)data[in][jn][N - 1] = data[in][jn][kn];
-	if (kn == N - 2)data[in][jn][1] = data[in][jn][kn];
+	if (kn == N - 2)data[in][jn][0] = data[in][jn][kn];
 }
 
 void Model::MonteCarlo()
