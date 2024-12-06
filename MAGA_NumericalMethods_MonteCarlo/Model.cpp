@@ -99,7 +99,11 @@ void Model::MonteCarloStep()
 {
 	unique_lock<mutex>lk(dmutex);
 	StepCounter++;
-
+	if (StepCounter == NMKSH)
+	{
+		StepCounter = 0;
+		MKSH++;
+	}
 	int i = RandId();
 	int j = RandId();
 	int k = RandId();
@@ -129,7 +133,7 @@ void Model::MonteCarloStep()
 	}
 
 	double R = rand(0, 1);
-	double cap = exp(DE / kb / T);
+	double cap = exp(-DE / kb / T);
 	if (R < cap)
 	{
 		Swap(i, j, k, in, jn, kn);
@@ -241,23 +245,6 @@ inline double Model::CalcDE(int& i, int& j, int& k, int& in, int& jn, int& kn)
 	int n[7] = { data[i][j][k],data[i + 1][j][k],data[i - 1][j][k],data[i][j + 1][k],data[i][j - 1][k],data[i][j][k + 1],data[i][j][k - 1] };
 	int nn[7] = { data[in][jn][kn],data[in + 1][jn][kn],data[in - 1][jn][kn],data[in][jn + 1][kn],data[in][jn - 1][kn],data[in][jn][kn + 1],data[in][jn][kn - 1] };
 
-	res += n[0] * n[1];
-	res += n[0] * n[2];
-	res += n[0] * n[3];
-	res += n[0] * n[4];
-	res += n[0] * n[5];
-	res += n[0] * n[6];
-
-	res += nn[0] * nn[1];
-	res += nn[0] * nn[2];
-	res += nn[0] * nn[3];
-	res += nn[0] * nn[4];
-	res += nn[0] * nn[5];
-	res += nn[0] * nn[6];
-
-	n[0] = -n[0];
-	nn[0] = -nn[0];
-
 	res -= n[0] * n[1];
 	res -= n[0] * n[2];
 	res -= n[0] * n[3];
@@ -272,7 +259,24 @@ inline double Model::CalcDE(int& i, int& j, int& k, int& in, int& jn, int& kn)
 	res -= nn[0] * nn[5];
 	res -= nn[0] * nn[6];
 
-	res *= Esm;
+	n[0] = -n[0];
+	nn[0] = -nn[0];
+
+	res += n[0] * n[1];
+	res += n[0] * n[2];
+	res += n[0] * n[3];
+	res += n[0] * n[4];
+	res += n[0] * n[5];
+	res += n[0] * n[6];
+
+	res += nn[0] * nn[1];
+	res += nn[0] * nn[2];
+	res += nn[0] * nn[3];
+	res += nn[0] * nn[4];
+	res += nn[0] * nn[5];
+	res += nn[0] * nn[6];
+
+	res *= -Esm;
 	return res;
 }
 
@@ -308,9 +312,11 @@ void Model::MonteCarlo()
 	GenerateStartDistribution();
 	//CalcStartEnergy();
 	StepCounter = 0;
+	MKSH = 0;
+	NMKSH = N * N * N;
 	Continue = true;
 
-	while ((StepCounter < StepLimit) && Continue)
+	while ((MKSH < StepLimit))
 	{
 		MonteCarloStep();
 	}
@@ -427,7 +433,7 @@ void Model::Wait()
 
 int Model::GetStepCounter()
 {
-	return StepCounter;
+	return MKSH;
 }
 
 double Model::GetEsr()

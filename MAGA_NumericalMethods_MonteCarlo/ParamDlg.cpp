@@ -13,11 +13,11 @@ IMPLEMENT_DYNAMIC(ParamDlg, CDialogEx)
 
 ParamDlg::ParamDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_PARAM_DIALOG, pParent)
-	, N(50)
+	, N(20)
 	, x(0.5)
-	, Esm(1)
+	, Esm(-1)
 	, T(0.75)
-	, StepLimit(1000000)
+	, StepLimit(1000)
 {
 
 }

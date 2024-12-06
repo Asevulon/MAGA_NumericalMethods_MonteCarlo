@@ -6,6 +6,7 @@
 #include"ParamDlg.h"
 #include"ModelDrawer.h"
 #include"Model.h"
+#include"Model2D.h"
 #include"EsrDlg.h"
 // Диалоговое окно MyDlg
 class MyDlg : public CDialogEx
@@ -41,7 +42,7 @@ public:
 	ModelDrawer XOZ;
 	ModelDrawer YOZ;
 	afx_msg void OnBnClickedOk();
-	Model model;
+	Model2D model;
 	UINT_PTR timerid;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	CProgressCtrl Progress;

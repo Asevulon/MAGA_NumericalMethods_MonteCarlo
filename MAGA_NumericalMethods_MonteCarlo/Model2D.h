@@ -4,7 +4,7 @@
 #include<mutex>
 using namespace std;
 
-class Model
+class Model2D
 {
 private:
 	int N = 0;
@@ -13,7 +13,7 @@ private:
 	double T = 0;
 	double E = 0;
 	int StepLimit = 0;
-	vector<vector<vector<int>>>data;
+	vector<vector<int>>data;
 
 	int MKSH = 0;
 	int NMKSH = 0;
@@ -25,6 +25,8 @@ private:
 	mutex smutex;
 	mutex dmutex;
 	mutex wmutex;
+	mutex amutex;
+	condition_variable acv;
 protected:
 	void GenerateStartDistribution();
 	inline double rand(double left, double right);
@@ -33,30 +35,31 @@ protected:
 	void GenerateBorders();
 	void CalcStartEnergy();
 	void MonteCarloStep();
-	inline vector<vector<int>> GetNeighbours(int i, int j, int k);
+	inline vector<vector<int>> GetNeighbours(int i, int j);
 	inline void AvoidBorder(int& i, int& j, int& k);
 	inline void AvoidBorder(vector<int>&ids);
-	inline double CalcLocalEnergy(int& i, int& j, int& k);
-	inline double CalcDE(int& i, int& j, int& k, int& in, int& jn, int& kn);
-	inline void Swap(int& i, int& j, int& k, int& in, int& jn, int& kn);
+	inline double CalcDE(int& i, int& j, int& in, int& jn);
+	inline void Swap(int& i, int& j, int& in, int& jn);
 	void MonteCarlo();
+	void MonteCarloAnimated();
+	void WaitAnimation();
 public:
-	Model();
-	Model(const Model& r);
+	Model2D();
+	Model2D(const Model2D& r);
 	void SetN(int val);
 	void SetX(double val);
 	void SetEsm(double val);
 	void SetT(double val);
 	void SetStepLimit(int val);
-	vector<vector<int>>GetXOY();
-	vector<vector<int>>GetXOZ();
-	vector<vector<int>>GetYOZ();
+	vector<vector<int>>GetData();
 	void main();
+	void Animated();
 	void Stop();
 	bool InProc();
 	void Wait();
 	int GetStepCounter();
 	double GetEsr();
 	double GetT();
+	void NotifyAnimation();
 };
 

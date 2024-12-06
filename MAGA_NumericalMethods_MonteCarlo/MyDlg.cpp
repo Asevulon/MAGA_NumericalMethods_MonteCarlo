@@ -191,8 +191,8 @@ void MyDlg::OnBnClickedOk()
 	if (!init)OnBnClickedButtonParams();
 	Progress.SetPos(0);
 	model.Stop();
+	//model.Animated();
 	model.main();
-
 	timerid = SetTimer(123, 20, NULL);
 
 	thread thr([&]() {
@@ -210,6 +210,9 @@ void MyDlg::OnTimer(UINT_PTR nIDEvent)
 	//XOY.SetData(model.GetXOY());
 	//XOZ.SetData(model.GetXOZ());
 	//YOZ.SetData(model.GetYOZ());
+	XOY.SetData(model.GetData());
+	model.NotifyAnimation();
+	XOY.Invalidate();
 	Progress.SetPos(float(model.GetStepCounter()) / float(pdlg.StepLimit) * 100.);
 	CDialogEx::OnTimer(nIDEvent);
 }
@@ -217,9 +220,12 @@ void MyDlg::OnTimer(UINT_PTR nIDEvent)
 
 afx_msg LRESULT MyDlg::OnRedraw(WPARAM wParam, LPARAM lParam)
 {
-	XOY.SetData(model.GetXOY());
-	XOZ.SetData(model.GetXOZ());
-	YOZ.SetData(model.GetYOZ());
+	//XOY.SetData(model.GetXOY());
+	//XOZ.SetData(model.GetXOZ());
+	//YOZ.SetData(model.GetYOZ());
+	XOY.SetData(model.GetData());
+	XOY.Invalidate();
+	model.NotifyAnimation();
 	Progress.SetPos(float(model.GetStepCounter()) / float(pdlg.StepLimit) * 100.);
 	return 0;
 }
