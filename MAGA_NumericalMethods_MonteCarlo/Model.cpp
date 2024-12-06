@@ -351,7 +351,7 @@ void Model::SetEsm(double val)
 
 void Model::SetT(double val)
 {
-	T = val * Esm / 2. / kb;
+	T = val * fabs(Esm) / 2. / kb;
 }
 
 void Model::SetStepLimit(int val)
