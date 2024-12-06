@@ -20,6 +20,7 @@
 #define IDC_EDIT5                       1005
 #define IDC_PROGRESS1                   1005
 #define IDC_BUTTON1                     1006
+#define IDC_EDIT6                       1006
 #define IDC_Esr                         1007
 #define IDC_Esr2                        1008
 

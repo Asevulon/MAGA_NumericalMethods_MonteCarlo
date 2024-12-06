@@ -102,6 +102,11 @@ void MultiExp::SetInetrpolateN(int val)
 	reinterpolate = true;
 }
 
+void MultiExp::SetEsrStart(int val)
+{
+	EsrStart = val;
+}
+
 void MultiExp::main()
 {
 	models = vector<Model>(NStep, Model());
@@ -113,6 +118,7 @@ void MultiExp::main()
 		models[i].SetEsm(Esm);
 		models[i].SetT(i * step + Tmin);
 		models[i].SetStepLimit(StepLimit);
+		models[i].SetEsrStart(EsrStart);
 		models[i].main();
 	}
 	reinterpolate = true;

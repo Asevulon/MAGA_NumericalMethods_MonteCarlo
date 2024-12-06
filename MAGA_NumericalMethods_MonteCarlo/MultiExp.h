@@ -18,6 +18,7 @@ private:
 	vector<double> TInterpolated;
 	vector<double> EsrDerivative;
 	int InterpolateN = 0;
+	int EsrStart = 0;
 protected:
 	void Interpolate();
 public:
@@ -29,7 +30,8 @@ public:
 	void SetTmax(double val);
 	void SetNStep(int val);
 	void SetInetrpolateN(int val);
-	
+	void SetEsrStart(int val);
+
 	void main();
 	void Wait();
 	double GetProgress();

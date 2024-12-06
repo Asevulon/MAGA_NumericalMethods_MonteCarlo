@@ -103,6 +103,7 @@ void Model::MonteCarloStep()
 	{
 		StepCounter = 0;
 		MKSH++;
+		MKSHDone = true;
 	}
 	int i = RandId();
 	int j = RandId();
@@ -242,8 +243,8 @@ inline double Model::CalcDE(int& i, int& j, int& k, int& in, int& jn, int& kn)
 {
 	double res = 0;
 
-	int n[7] = { data[i][j][k],data[i + 1][j][k],data[i - 1][j][k],data[i][j + 1][k],data[i][j - 1][k],data[i][j][k + 1],data[i][j][k - 1] };
-	int nn[7] = { data[in][jn][kn],data[in + 1][jn][kn],data[in - 1][jn][kn],data[in][jn + 1][kn],data[in][jn - 1][kn],data[in][jn][kn + 1],data[in][jn][kn - 1] };
+	vector<int> n = { data[i][j][k],data[i + 1][j][k],data[i - 1][j][k],data[i][j + 1][k],data[i][j - 1][k],data[i][j][k + 1],data[i][j][k - 1] };
+	vector<int> nn = { data[in][jn][kn],data[in + 1][jn][kn],data[in - 1][jn][kn],data[in][jn + 1][kn],data[in][jn - 1][kn],data[in][jn][kn + 1],data[in][jn][kn - 1] };
 
 	res -= n[0] * n[1];
 	res -= n[0] * n[2];
@@ -259,8 +260,14 @@ inline double Model::CalcDE(int& i, int& j, int& k, int& in, int& jn, int& kn)
 	res -= nn[0] * nn[5];
 	res -= nn[0] * nn[6];
 
-	n[0] = -n[0];
-	nn[0] = -nn[0];
+	Swap(i, j, k, in, jn, kn);
+
+	n = [&]() {
+		vector<int>temp = { data[i][j][k],data[i + 1][j][k],data[i - 1][j][k],data[i][j + 1][k],data[i][j - 1][k],data[i][j][k + 1],data[i][j][k - 1] }; 
+	return temp; }();
+	nn = [&]() {
+		vector<int>temp = { data[in][jn][kn],data[in + 1][jn][kn],data[in - 1][jn][kn],data[in][jn + 1][kn],data[in][jn - 1][kn],data[in][jn][kn + 1],data[in][jn][kn - 1] }; 
+	return temp; }();
 
 	res += n[0] * n[1];
 	res += n[0] * n[2];
@@ -277,6 +284,9 @@ inline double Model::CalcDE(int& i, int& j, int& k, int& in, int& jn, int& kn)
 	res += nn[0] * nn[6];
 
 	res *= -Esm;
+
+	Swap(i, j, k, in, jn, kn);
+
 	return res;
 }
 
@@ -310,7 +320,7 @@ void Model::MonteCarlo()
 	unique_lock<mutex>lk1(wmutex);
 
 	GenerateStartDistribution();
-	//CalcStartEnergy();
+	CalcStartEnergy();
 	StepCounter = 0;
 	MKSH = 0;
 	NMKSH = N * N * N;
@@ -319,8 +329,12 @@ void Model::MonteCarlo()
 	while ((MKSH < StepLimit))
 	{
 		MonteCarloStep();
+		if (MKSHDone) {
+			if (MKSH >= EsrStart)Esr += E;
+			MKSHDone = false;
+		}
 	}
-	CalcStartEnergy();
+	//CalcStartEnergy();
 	Continue = false;
 }
 
@@ -359,18 +373,23 @@ void Model::SetStepLimit(int val)
 	StepLimit = val;
 }
 
+void Model::SetEsrStart(int val)
+{
+	EsrStart = val;
+}
+
 vector<vector<int>> Model::GetXOY()
 {
-	vector<vector<int>>res(N,vector<int>(N,1));
+	vector<vector<int>>res(N - 2,vector<int>(N,1));
 	int id = N / 2;
 
 	unique_lock<mutex>lk(dmutex);
 
-	for (int i = 0; i < N; i++)
+	for (int i = 1; i < N - 1; i++)
 	{
-		for (int j = 0; j < N; j++)
+		for (int j = 1; j < N - 1; j++)
 		{
-			res[i][j] = data[i][j][id];
+			res[i - 1][j - 1] = data[i][j][id];
 		}
 	}
 	return res;
@@ -378,14 +397,14 @@ vector<vector<int>> Model::GetXOY()
 
 vector<vector<int>> Model::GetXOZ()
 {
-	vector<vector<int>>res(N, vector<int>(N, 1));
+	vector<vector<int>>res(N - 2, vector<int>(N, 1));
 	int id = N / 2;
 	unique_lock<mutex>lk(dmutex);
-	for (int i = 0; i < N; i++)
+	for (int i = 1; i < N - 1; i++)
 	{
-		for (int j = 0; j < N; j++)
+		for (int j = 1; j < N - 1; j++)
 		{
-			res[i][j] = data[i][id][j];
+			res[i - 1][j - 1] = data[i][id][j];
 		}
 	}
 	return res;
@@ -393,14 +412,14 @@ vector<vector<int>> Model::GetXOZ()
 
 vector<vector<int>> Model::GetYOZ()
 {
-	vector<vector<int>>res(N, vector<int>(N, 1));
+	vector<vector<int>>res(N - 2, vector<int>(N, 1));
 	int id = N / 2;
 	unique_lock<mutex>lk(dmutex);
-	for (int i = 0; i < N; i++)
+	for (int i = 1; i < N - 1; i++)
 	{
-		for (int j = 0; j < N; j++)
+		for (int j = 1; j < N - 1; j++)
 		{
-			res[i][j] = data[id][i][j];
+			res[i - 1][j - 1] = data[id][i][j];
 		}
 	}
 	return res;
@@ -438,7 +457,7 @@ int Model::GetStepCounter()
 
 double Model::GetEsr()
 {
-	return E / (N - 2) / (N - 2) / (N - 2);
+	return Esr / (N - 2) / (N - 2) / (N - 2);
 }
 
 double Model::GetT()

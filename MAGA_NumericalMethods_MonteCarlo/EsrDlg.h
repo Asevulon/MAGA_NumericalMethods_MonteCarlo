@@ -40,4 +40,5 @@ public:
 	CButton OkButton;
 	int NInterpolate;
 	Drawer DerDrw;
+	int EsrStart;
 };

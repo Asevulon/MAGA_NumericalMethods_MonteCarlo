@@ -210,9 +210,9 @@ void MyDlg::OnTimer(UINT_PTR nIDEvent)
 	//XOY.SetData(model.GetXOY());
 	//XOZ.SetData(model.GetXOZ());
 	//YOZ.SetData(model.GetYOZ());
-	XOY.SetData(model.GetData());
-	model.NotifyAnimation();
-	XOY.Invalidate();
+	//XOY.SetData(model.GetData());
+	//model.NotifyAnimation();
+	//XOY.Invalidate();
 	Progress.SetPos(float(model.GetStepCounter()) / float(pdlg.StepLimit) * 100.);
 	CDialogEx::OnTimer(nIDEvent);
 }
@@ -220,13 +220,13 @@ void MyDlg::OnTimer(UINT_PTR nIDEvent)
 
 afx_msg LRESULT MyDlg::OnRedraw(WPARAM wParam, LPARAM lParam)
 {
-	//XOY.SetData(model.GetXOY());
-	//XOZ.SetData(model.GetXOZ());
-	//YOZ.SetData(model.GetYOZ());
-	XOY.SetData(model.GetData());
-	XOY.Invalidate();
-	model.NotifyAnimation();
+	XOY.SetData(model.GetXOY());
+	XOZ.SetData(model.GetXOZ());
+	YOZ.SetData(model.GetYOZ());
+	//XOY.SetData(model.GetData());
+	//model.NotifyAnimation();
 	Progress.SetPos(float(model.GetStepCounter()) / float(pdlg.StepLimit) * 100.);
+	MessageBoxW(L"Моделирование завершено");
 	return 0;
 }
 

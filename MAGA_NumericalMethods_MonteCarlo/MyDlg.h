@@ -42,7 +42,7 @@ public:
 	ModelDrawer XOZ;
 	ModelDrawer YOZ;
 	afx_msg void OnBnClickedOk();
-	Model2D model;
+	Model model;
 	UINT_PTR timerid;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	CProgressCtrl Progress;

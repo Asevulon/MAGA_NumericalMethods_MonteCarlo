@@ -15,8 +15,9 @@ EsrDlg::EsrDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ESR_DIALOG, pParent)
 	, Tmin(0.6)
 	, Tmax(3.5)
-	, N(100)
+	, N(50)
 	, NInterpolate(2000)
+	, EsrStart(500)
 {
 
 }
@@ -36,6 +37,7 @@ void EsrDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDOK, OkButton);
 	DDX_Text(pDX, IDC_EDIT4, NInterpolate);
 	DDX_Control(pDX, IDC_Esr2, DerDrw);
+	DDX_Text(pDX, IDC_EDIT6, EsrStart);
 }
 
 
@@ -64,6 +66,7 @@ void EsrDlg::OnBnClickedOk()
 	me.SetTmin(Tmin);
 	me.SetTmax(Tmax);
 	me.SetInetrpolateN(NInterpolate);
+	me.SetEsrStart(EsrStart);
 	prog.SetPos(0);
 
 	me.main();

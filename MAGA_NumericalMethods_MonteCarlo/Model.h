@@ -15,6 +15,8 @@ private:
 	int StepLimit = 0;
 	vector<vector<vector<int>>>data;
 
+	double Esr = 0;
+	int EsrStart = 0;
 	int MKSH = 0;
 	int NMKSH = 0;
 	int StepCounter = 0;
@@ -25,6 +27,8 @@ private:
 	mutex smutex;
 	mutex dmutex;
 	mutex wmutex;
+
+	bool MKSHDone = false;
 protected:
 	void GenerateStartDistribution();
 	inline double rand(double left, double right);
@@ -48,6 +52,7 @@ public:
 	void SetEsm(double val);
 	void SetT(double val);
 	void SetStepLimit(int val);
+	void SetEsrStart(int val);
 	vector<vector<int>>GetXOY();
 	vector<vector<int>>GetXOZ();
 	vector<vector<int>>GetYOZ();
