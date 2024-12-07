@@ -129,7 +129,6 @@ void Model::MonteCarloStep()
 	if (DE < 0)
 	{
 		Swap(i, j, k, in, jn, kn);
-		E += DE;
 		return;
 	}
 
@@ -138,7 +137,6 @@ void Model::MonteCarloStep()
 	if (R < cap)
 	{
 		Swap(i, j, k, in, jn, kn);
-		E += DE;
 		return;
 	}
 }
@@ -372,7 +370,7 @@ void Model::SetEsm(double val)
 
 void Model::SetT(double val)
 {
-	T = val * fabs(Esm) / 2. / kb;
+	T = val * fabs(Esm) / kb;
 }
 
 void Model::SetStepLimit(int val)
