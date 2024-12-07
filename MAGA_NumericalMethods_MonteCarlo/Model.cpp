@@ -133,7 +133,7 @@ void Model::MonteCarloStep()
 	}
 
 	double R = rand(0, 1);
-	double cap = exp(-DE / kb / T);
+	double cap = exp(-DE /kb / T);
 	if (R < cap)
 	{
 		Swap(i, j, k, in, jn, kn);

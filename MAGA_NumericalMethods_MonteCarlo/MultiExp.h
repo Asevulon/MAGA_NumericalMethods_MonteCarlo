@@ -19,6 +19,8 @@ private:
 	vector<double> EsrDerivative;
 	int InterpolateN = 0;
 	int EsrStart = 0;
+
+	const double Tc = 2.2554;
 protected:
 	void Interpolate();
 public:

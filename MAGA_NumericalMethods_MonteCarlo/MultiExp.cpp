@@ -46,10 +46,10 @@ void MultiExp::Interpolate()
 		temp += pow2(xi1 - x) * (x - xi) * m[id] / pow2(h);
 		temp += pow2(x - xi) * (x - xi1) * m[id + 1] / pow2(h);
 		EsrInterpolated[i] = temp;
-		TInterpolated[i] = x;
+		TInterpolated[i] = x / Tc;
 	}
 	EsrInterpolated[InterpolateN - 1] = f[actsize - 1];
-	TInterpolated[InterpolateN - 1] = Tmax;
+	TInterpolated[InterpolateN - 1] = Tmax / Tc;
 
 	EsrDerivative[0] = (4. * EsrInterpolated[1] - EsrInterpolated[2] - 3. * EsrInterpolated[0]) / 2. / ih;
 	EsrDerivative[InterpolateN - 1] = (3. * EsrInterpolated[InterpolateN - 1] + EsrInterpolated[InterpolateN - 3] - 4. * EsrInterpolated[InterpolateN - 2]) / 2. / ih;
@@ -157,7 +157,7 @@ vector<double> MultiExp::GetT()
 	double step = (Tmax - Tmin) / (NStep - 1);
 	for (int i = 0; i < NStep; i++)
 	{
-		res.push_back(i * step + Tmin);
+		res.push_back((i * step + Tmin) / Tc);
 	}
 	return res;
 }
