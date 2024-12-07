@@ -27,8 +27,11 @@ private:
 	mutex smutex;
 	mutex dmutex;
 	mutex wmutex;
+	mutex emutex;
 
 	bool MKSHDone = false;
+
+	vector<double>Edata;
 protected:
 	void GenerateStartDistribution();
 	inline double rand(double left, double right);
@@ -63,5 +66,6 @@ public:
 	int GetStepCounter();
 	double GetEsr();
 	double GetT();
+	vector<double>GetVectorE();
 };
 

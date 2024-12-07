@@ -50,4 +50,5 @@ protected:
 	afx_msg LRESULT OnRedraw(WPARAM wParam, LPARAM lParam);
 public:
 	afx_msg void OnBnClickedButton1();
+	Drawer Egraph;
 };

@@ -22,6 +22,8 @@
 #define IDC_BUTTON1                     1006
 #define IDC_EDIT6                       1006
 #define IDC_Esr                         1007
+#define IDC_YOZ2                        1007
+#define IDC_EGRAPH                      1007
 #define IDC_Esr2                        1008
 
 // Next default values for new objects

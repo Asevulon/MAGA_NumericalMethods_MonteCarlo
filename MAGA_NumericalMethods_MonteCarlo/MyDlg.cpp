@@ -63,6 +63,7 @@ void MyDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_XOZ, XOZ);
 	DDX_Control(pDX, IDC_YOZ, YOZ);
 	DDX_Control(pDX, IDC_PROGRESS1, Progress);
+	DDX_Control(pDX, IDC_YOZ2, Egraph);
 }
 
 BEGIN_MESSAGE_MAP(MyDlg, CDialogEx)
@@ -113,9 +114,13 @@ BOOL MyDlg::OnInitDialog()
 	XOY.SetTitle(L"XOY");
 	YOZ.SetTitle(L"YOZ");
 
-	XOZ.SetPadding(10, 5, 10, 10);
-	XOY.SetPadding(10, 5, 10, 10);
-	YOZ.SetPadding(10, 5, 10, 10);
+	XOZ.SetPadding(5, 5, 10, 10);
+	XOY.SetPadding(5, 5, 10, 10);
+	YOZ.SetPadding(5, 5, 10, 10);
+
+	Egraph.SetTitle(L"E");
+	Egraph.SetPadding(22, 5, 10, 10);
+	Egraph.ShowAvg();
 
 	Progress.SetRange(0, 100);
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
@@ -182,6 +187,7 @@ void MyDlg::OnBnClickedButtonParams()
 	model.SetEsm(pdlg.Esm);
 	model.SetT(pdlg.T);
 	model.SetStepLimit(pdlg.StepLimit);
+	model.SetEsrStart(pdlg.EsrStart);
 }
 
 
@@ -190,7 +196,7 @@ void MyDlg::OnBnClickedOk()
 	// TODO: добавьте свой код обработчика уведомлений
 	if (!init)OnBnClickedButtonParams();
 	Progress.SetPos(0);
-	model.Stop();
+	//model.Stop();
 	//model.Animated();
 	model.main();
 	timerid = SetTimer(123, 500, NULL);
@@ -223,6 +229,7 @@ afx_msg LRESULT MyDlg::OnRedraw(WPARAM wParam, LPARAM lParam)
 	XOY.SetData(model.GetXOY());
 	XOZ.SetData(model.GetXOZ());
 	YOZ.SetData(model.GetYOZ());
+	Egraph.SetData(model.GetVectorE());
 	//XOY.SetData(model.GetData());
 	//model.NotifyAnimation();
 	Progress.SetPos(float(model.GetStepCounter()) / float(pdlg.StepLimit) * 100.);

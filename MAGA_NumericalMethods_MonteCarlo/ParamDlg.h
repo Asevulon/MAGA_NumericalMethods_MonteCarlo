@@ -27,4 +27,5 @@ public:
 	double Esm;
 	double T;
 	int StepLimit;
+	int EsrStart;
 };

@@ -18,6 +18,7 @@ ParamDlg::ParamDlg(CWnd* pParent /*=nullptr*/)
 	, Esm(-1)
 	, T(0.75)
 	, StepLimit(1000)
+	, EsrStart(500)
 {
 
 }
@@ -34,6 +35,7 @@ void ParamDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT3, Esm);
 	DDX_Text(pDX, IDC_EDIT4, T);
 	DDX_Text(pDX, IDC_EDIT5, StepLimit);
+	DDX_Text(pDX, IDC_EDIT6, EsrStart);
 }
 
 

@@ -31,7 +31,9 @@ private:
 	ULONG_PTR token;
 	
 	CString title;
-
+	bool ShowAvgFlag = false;
+	double Avg = 0;
+	bool UpdateAvgFlag = false;
 public:
 	Drawer();
 	virtual ~Drawer();
@@ -39,6 +41,7 @@ public:
 protected:
 	double CalcStringLen(HDC hDC, CString string);
 	void AutoKeys();
+	void CalcAvg();
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual void DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/);
@@ -50,6 +53,7 @@ public:
 	void SetPadding(double lPadding, double rPadding, double tPadding, double bPadding);
 	void SetMarksLen(int len);
 	void SetTitle(CString str);
+	void ShowAvg(bool show = true);
 };
 
 

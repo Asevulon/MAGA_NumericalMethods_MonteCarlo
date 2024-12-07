@@ -325,12 +325,19 @@ void Model::MonteCarlo()
 	MKSH = 0;
 	NMKSH = N * N * N;
 	Continue = true;
+	Edata.clear();
 
 	while ((MKSH < StepLimit))
 	{
 		MonteCarloStep();
 		if (MKSHDone) {
-			if (MKSH >= EsrStart)Esr += E;
+			if (MKSH >= StepLimit - EsrStart)
+			{
+				CalcStartEnergy();
+				Esr += E;
+				unique_lock<mutex>lk(emutex);
+				Edata.push_back(E / (N - 2) / (N - 2) / (N - 2));
+			}
 			MKSHDone = false;
 		}
 	}
@@ -446,7 +453,6 @@ bool Model::InProc()
 
 void Model::Wait()
 {
-	if (!Continue)return;
 	unique_lock<mutex>lk(wmutex);
 }
 
@@ -457,10 +463,16 @@ int Model::GetStepCounter()
 
 double Model::GetEsr()
 {
-	return Esr / (N - 2) / (N - 2) / (N - 2);
+	return Esr / (N - 2.) / (N - 2.) / (N - 2.) / (EsrStart);
 }
 
 double Model::GetT()
 {
 	return T;
+}
+
+vector<double> Model::GetVectorE()
+{
+	unique_lock<mutex>lk(emutex);
+	return Edata;
 }

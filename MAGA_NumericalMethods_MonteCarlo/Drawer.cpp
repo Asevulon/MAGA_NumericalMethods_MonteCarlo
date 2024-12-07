@@ -146,6 +146,22 @@ void Drawer::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 		gr.DrawString(title, title.GetLength() + 1, &font, p1, &brush);
 	}
 
+	if (ShowAvgFlag)
+	{
+		if (UpdateAvgFlag)CalcAvg();
+
+		p1 = PointF(keys.front(), Avg);
+		p2 = PointF(keys.back(), Avg);
+
+		matr.TransformPoints(&p1);
+		matr.TransformPoints(&p2);
+
+		Pen AvgPen(Color(0, 100, 200));
+
+		gr.DrawLine(&AvgPen, p1, p2);
+	}
+
+
 
 	p1 = PointF(keys[0],data[0]);
 	matr.TransformPoints(&p1);
@@ -176,6 +192,8 @@ void Drawer::SetData(vector<double>& y)
 		top += (top - bot) * 0.15;
 		bot -= (top - bot) * 0.15;
 	}
+	UpdateAvgFlag = true;
+	Invalidate();
 }
 void Drawer::SetKeys(vector<double>& x)
 {
@@ -206,6 +224,12 @@ void Drawer::SetTitle(CString str)
 	title = str;
 }
 
+void Drawer::ShowAvg(bool show)
+{
+	ShowAvgFlag = show;
+	UpdateAvgFlag = show;
+}
+
 
 double Drawer::CalcStringLen(HDC hDC, CString str)
 {
@@ -226,4 +250,11 @@ void Drawer::AutoKeys()
 	for (int i = 0; i < keys.size(); i++)keys[i] = i;
 	left = 0; 
 	right = keys.size() - 1;
+}
+
+void Drawer::CalcAvg()
+{
+	Avg = 0;
+	for (auto& item : data)Avg += item;
+	Avg /= data.size();
 }
